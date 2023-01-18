@@ -24,11 +24,13 @@ error Raffle__UpkeepNotNeeded(
  * @dev This implements Chainlink VRF V2 and Chainlink Keepers
  */
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
-  // Type Declarations
+  /** Type Declarations */
   enum RaffleState {
     OPEN,
     CALCULATING
   }
+
+  /** Chainlink VRF V2 Variables */
 
   VRFCoordinatorV2Interface private immutable i_VRFCoordinatorV2;
 
@@ -47,17 +49,20 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
   // How many random values to request:
   uint32 private constant NUM_WORDS = 1;
 
-  // Lottery Variables:
+  /** Lottery Variables */
+
   uint256 private immutable i_entranceFee;
   address payable[] private s_players;
   address private s_recentWinner;
   RaffleState private s_raffleState;
 
-  // Keepers Variables:
+  /** Keepers Variables */
+
   uint256 private immutable i_interval;
   uint256 private s_lastTimestamp;
 
-  // Events
+  /** Events */
+
   event raffleEntered(address indexed player);
   event randomWinnerRequested(uint256 indexed requestId);
   event randomWinnerPicked(address indexed recentWinner);
