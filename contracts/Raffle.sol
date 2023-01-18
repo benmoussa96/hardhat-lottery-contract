@@ -42,7 +42,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
   uint32 private immutable i_callbackGasLimit;
 
   // How many confirmations the Chainlink node should wait before responding:
-  uint16 private constant REQUEST_CONFIRAMATION = 3;
+  uint16 private constant REQUEST_CONFIRMATIONS = 3;
 
   // How many random values to request:
   uint32 private constant NUM_WORDS = 1;
@@ -136,7 +136,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     uint256 requestId = i_VRFCoordinatorV2.requestRandomWords(
       i_gasLane,
       i_subscriptionId,
-      REQUEST_CONFIRAMATION,
+      REQUEST_CONFIRMATIONS,
       i_callbackGasLimit,
       NUM_WORDS
     );
@@ -144,6 +144,10 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     emit randomWinnerRequested(requestId);
   }
 
+  /**
+   * @dev This is the function that Chainlink VRF node
+   * calls to send the money to the random winner.
+   */
   function fulfillRandomWords(
     uint256 /*_requestId*/,
     uint256[] memory _randomWords
@@ -165,15 +169,41 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     emit randomWinnerPicked(recentWinner);
   }
 
-  function getEtranceFee() public view returns (uint256) {
-    return i_entranceFee;
+  /** Getter Functions */
+
+  function getRaffleState() public view returns (RaffleState) {
+    return s_raffleState;
+  }
+
+  function getNumWords() public pure returns (uint256) {
+    return NUM_WORDS;
+  }
+
+  function getRequestConfirmations() public pure returns (uint256) {
+    return REQUEST_CONFIRMATIONS;
+  }
+
+  function getRecentWinner() public view returns (address) {
+    return s_recentWinner;
   }
 
   function getPlayer(uint256 index) public view returns (address) {
     return s_players[index];
   }
 
-  function getRecentWinner() public view returns (address) {
-    return s_recentWinner;
+  function getLastTimeStamp() public view returns (uint256) {
+    return s_lastTimestamp;
+  }
+
+  function getInterval() public view returns (uint256) {
+    return i_interval;
+  }
+
+  function getEntranceFee() public view returns (uint256) {
+    return i_entranceFee;
+  }
+
+  function getNumberOfPlayers() public view returns (uint256) {
+    return s_players.length;
   }
 }
