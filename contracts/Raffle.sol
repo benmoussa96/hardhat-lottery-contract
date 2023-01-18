@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 // Uncomment this line to use console.log
@@ -6,13 +6,13 @@ pragma solidity ^0.8.17;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
 error Raffle__NotEnoughETHEntered();
 error Raffle__TransferFailed();
 error Raffle__Notpen();
 
-contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
+contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
   // Type Declarations
   enum RaffleState {
     OPEN,
@@ -42,10 +42,11 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
   address private s_recentWinner;
   RaffleState private s_raffleState;
 
-  // Keeper Variables
+  // Keepers Variables:
   uint256 private immutable i_interval;
   uint256 private s_lastTimestamp;
 
+  // Events
   event raffleEntered(address indexed player);
   event randomWinnerRequested(uint256 indexed requestId);
   event randomWinnerPicked(address indexed recentWinner);
@@ -83,9 +84,14 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     external
     view
     override
-    returns (bool upkeepNeeded, bytes memory performData)
+    returns (bool upkeepNeeded, bytes memory /*performData*/)
   {
     bool isOpen = RaffleState.OPEN == s_raffleState;
+    bool intervalPassed = (block.timestamp - s_lastTimestamp) > i_interval;
+    bool hasPlayers = s_players.length > 0;
+    bool hasBalance = address(this).balance > 0;
+
+    upkeepNeeded = (isOpen && intervalPassed && hasPlayers && hasBalance);
   }
 
   function enterRaffle() public payable {
@@ -99,6 +105,8 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
     s_players.push(payable(msg.sender));
     emit raffleEntered(msg.sender);
   }
+
+  //   function performUpkeep(bytes calldata performData) external override
 
   function requestRandomWinner() external {
     s_raffleState = RaffleState.CALCULATING;
