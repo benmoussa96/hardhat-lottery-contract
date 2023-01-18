@@ -11,7 +11,18 @@ import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.s
 error Raffle__NotEnoughETHEntered();
 error Raffle__TransferFailed();
 error Raffle__Notpen();
+error Raffle__UpkeepNotNeeded(
+  uint256 currentBalance,
+  uint256 numPlayers,
+  uint256 raffleState
+);
 
+/**
+ * @title A Sample Raffle Contract
+ * @author Ghaieth BEN MOUSSA
+ * @notice This smart contract is for creating an untamprable, decentralized lottery
+ * @dev This implements Chainlink VRF V2 and Chainlink Keepers
+ */
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
   // Type Declarations
   enum RaffleState {
@@ -79,9 +90,9 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
    * 4. The lottery should be in an "open" state.
    */
   function checkUpkeep(
-    bytes calldata /*checkData*/
+    bytes memory /*checkData*/
   )
-    external
+    public
     view
     override
     returns (bool upkeepNeeded, bytes memory /*performData*/)
@@ -106,7 +117,20 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     emit raffleEntered(msg.sender);
   }
 
+  /**
+   * @dev Once `checkUpkeep` is returning `true`, this function is called
+   * and it kicks off a Chainlink VRF call to get a random winner.
+   */
   function performUpkeep(bytes calldata /*performData*/) external override {
+    (bool upkeepNeeded, ) = checkUpkeep("");
+    if (!upkeepNeeded) {
+      revert Raffle__UpkeepNotNeeded(
+        address(this).balance,
+        s_players.length,
+        uint256(s_raffleState)
+      );
+    }
+
     s_raffleState = RaffleState.CALCULATING;
 
     uint256 requestId = i_VRFCoordinatorV2.requestRandomWords(
