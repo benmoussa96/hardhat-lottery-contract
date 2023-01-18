@@ -106,9 +106,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     emit raffleEntered(msg.sender);
   }
 
-  //   function performUpkeep(bytes calldata performData) external override
-
-  function requestRandomWinner() external {
+  function performUpkeep(bytes calldata /*performData*/) external override {
     s_raffleState = RaffleState.CALCULATING;
 
     uint256 requestId = i_VRFCoordinatorV2.requestRandomWords(
