@@ -15,6 +15,7 @@ const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const PIVATE_KEY = process.env.PIVATE_KEY;
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
+const REPORT_GAS = process.env.REPORT_GAS === "true";
 
 // You need to export an object to setup your config
 // Go to to https://hardhat.org/config learn more
@@ -40,7 +41,7 @@ const config: HardhatUserConfig = {
     apiKey: ETHERSCAN_API_KEY,
   },
   gasReporter: {
-    enabled: true,
+    enabled: REPORT_GAS,
     outputFile: "gas-report.txt",
     noColors: true,
     currency: "USD",

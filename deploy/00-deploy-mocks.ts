@@ -16,17 +16,12 @@ const deployMocks: DeployFunction = async function ({
   const chainId: number = network.config.chainId!;
 
   if (developmentChains.includes(network.name)) {
-    console.log("Local  network detected! Deploying mocks...");
-
     await deploy("VRFCoordinatorV2Mock", {
       contract: "VRFCoordinatorV2Mock",
       from: deployer,
       log: true,
       args: [BASE_FEE, GAS_PRICE_LINK],
     });
-
-    console.log("Mocks dployed!");
-    console.log("-------------------------------------------");
   }
 };
 

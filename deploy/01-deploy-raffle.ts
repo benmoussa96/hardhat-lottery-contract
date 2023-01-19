@@ -54,9 +54,6 @@ const deployRaffle: DeployFunction = async function ({
   if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
     await verify(raffle.address, raffleArgs);
   }
-
-  console.log(`Raffle deployed at ${raffle.address}!`);
-  console.log("-------------------------------------------------------------------");
 };
 
 export default deployRaffle;
