@@ -10,7 +10,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.s
 
 error Raffle__NotEnoughETHEntered();
 error Raffle__TransferFailed();
-error Raffle__Notpen();
+error Raffle__NotOpen();
 error Raffle__UpkeepNotNeeded(
     uint256 currentBalance,
     uint256 numPlayers,
@@ -96,12 +96,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
      */
     function checkUpkeep(
         bytes memory /*checkData*/
-    )
-        public
-        view
-        override
-        returns (bool upkeepNeeded, bytes memory /*performData*/)
-    {
+    ) public view override returns (bool upkeepNeeded, bytes memory /*performData*/) {
         bool isOpen = RaffleState.OPEN == s_raffleState;
         bool intervalPassed = (block.timestamp - s_lastTimestamp) > i_interval;
         bool hasPlayers = s_players.length > 0;
@@ -115,7 +110,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
             revert Raffle__NotEnoughETHEntered();
         }
         if (s_raffleState != RaffleState.OPEN) {
-            revert Raffle__Notpen();
+            revert Raffle__NotOpen();
         }
 
         s_players.push(payable(msg.sender));

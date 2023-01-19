@@ -10,8 +10,9 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
   : describe("Raffle unit tests", async () => {
       let raffle: Raffle,
         vrfCoordinatorV2Mock: VRFCoordinatorV2Mock,
+        deployer: SignerWithAddress,
         raffleEntranceFee: BigNumber,
-        deployer: SignerWithAddress;
+        interval: BigNumber;
       const chainId: number = network.config.chainId!;
 
       beforeEach(async () => {
@@ -22,6 +23,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
         raffle = await ethers.getContract("Raffle", deployer);
         vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock", deployer);
         raffleEntranceFee = await raffle.getEntranceFee();
+        interval = await raffle.getInterval();
       });
 
       describe("constructor()", async () => {
@@ -51,12 +53,26 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
         it("emits an event when a player enters the raffle", async () => {
           await expect(raffle.enterRaffle({ value: raffleEntranceFee })).to.emit(
             raffle,
-            "raffleEntered "
+            "raffleEntered"
           );
         });
 
         it("doesn't allow entrance when raffle is calculating", async () => {
           await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+          await network.provider.send("evm_mine", []);
+
+          // prtend to be a chainlink keeper:
+          await raffle.performUpkeep([]);
+          await expect(
+            raffle.enterRaffle({ value: raffleEntranceFee })
+          ).to.be.revertedWithCustomError(raffle, "Raffle__NotOpen");
+        });
+      });
+
+      describe("checkUpkeep()", async () => {
+        it("returns false if people haven't sent any ETH", async () => {
+          await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
         });
       });
     });
