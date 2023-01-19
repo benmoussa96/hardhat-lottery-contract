@@ -13,11 +13,12 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
         vrfCoordinatorV2Mock: VRFCoordinatorV2Mock,
         deployer: SignerWithAddress,
         raffleEntranceFee: BigNumber,
-        interval: BigNumber;
+        interval: BigNumber,
+        accounts: SignerWithAddress[];
       const chainId: number = network.config.chainId!;
 
       beforeEach(async () => {
-        const accounts = await ethers.getSigners();
+        accounts = await ethers.getSigners();
         deployer = accounts[0];
 
         await deployments.fixture(["all"]);
@@ -124,6 +125,13 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
 
           expect(requestId).to.be.greaterThan(0);
           expect(raffleState).to.equal(1);
+        });
+
+        it("picks a winner, resets, and sends money", async () => {
+          for (let i = 1; i < 4; i++) {
+            const accountConnectedRaffle = raffle.connect(accounts[i]);
+            await accountConnectedRaffle.enterRaffle({ value: raffleEntranceFee });
+          }
         });
       });
     });
