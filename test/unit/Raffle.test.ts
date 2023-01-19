@@ -7,7 +7,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
 
 !developmentChains.includes(network.name)
   ? describe.skip
-  : describe("Raffle unit tests", async () => {
+  : describe("Raffle unit tests", () => {
       let raffle: Raffle,
         vrfCoordinatorV2Mock: VRFCoordinatorV2Mock,
         deployer: SignerWithAddress,
@@ -26,7 +26,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
         interval = await raffle.getInterval();
       });
 
-      describe("constructor()", async () => {
+      describe("constructor()", () => {
         it("intialises the raffle correctly", async () => {
           const raffleState = await raffle.getRaffleState();
           const interval = await raffle.getInterval();
@@ -36,7 +36,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
         });
       });
 
-      describe("enterRaffle()", async () => {
+      describe("enterRaffle()", () => {
         it("reverts when you don't pay enough", async () => {
           await expect(raffle.enterRaffle()).to.be.revertedWithCustomError(
             raffle,
@@ -62,20 +62,34 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
           await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
           await network.provider.send("evm_mine", []);
 
-          // prtend to be a chainlink keeper:
+          // pretend to be a chainlink keeper:
           await raffle.performUpkeep([]);
+
           await expect(
             raffle.enterRaffle({ value: raffleEntranceFee })
           ).to.be.revertedWithCustomError(raffle, "Raffle__NotOpen");
         });
       });
 
-      describe("checkUpkeep()", async () => {
+      describe("checkUpkeep()", () => {
         it("returns false if people haven't sent any ETH", async () => {
           await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
           await network.provider.send("evm_mine", []);
 
           const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([]);
+          expect(upkeepNeeded).to.be.false;
+        });
+
+        it("returns false if the raffle isn't open", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+          await network.provider.send("evm_mine", []);
+          await raffle.performUpkeep([]);
+
+          const raffleState = await raffle.getRaffleState();
+          const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([]);
+
+          expect(raffleState).to.equal(1);
           expect(upkeepNeeded).to.be.false;
         });
       });
