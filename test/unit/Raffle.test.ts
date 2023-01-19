@@ -1,7 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { deployments, ethers, getNamedAccounts, network } from "hardhat";
+import { deployments, ethers, network } from "hardhat";
 import { developmentChains, networkConfig } from "../../helper-hardhat-config";
 import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
 
