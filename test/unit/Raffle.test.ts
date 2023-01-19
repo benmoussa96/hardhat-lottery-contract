@@ -73,6 +73,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
       describe("checkUpkeep()", async () => {
         it("returns false if people haven't sent any ETH", async () => {
           await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+          await network.provider.send("evm_mine", []);
         });
       });
     });
