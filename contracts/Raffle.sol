@@ -154,10 +154,9 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     ) internal override {
         uint256 indexOfWinner = _randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
+
         s_recentWinner = recentWinner;
-
         s_raffleState = RaffleState.OPEN;
-
         s_players = new address payable[](0);
 
         (bool success, ) = recentWinner.call{value: address(this).balance}("");

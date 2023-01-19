@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { assert } from "console";
 import { BigNumber } from "ethers";
 import { deployments, ethers, network } from "hardhat";
 import { developmentChains, networkConfig } from "../../helper-hardhat-config";
@@ -91,6 +92,38 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
 
           expect(raffleState).to.equal(1);
           expect(upkeepNeeded).to.be.false;
+        });
+      });
+
+      describe("performUpkeep()", () => {
+        it("only runs when checkUpkeep returns true", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+          await network.provider.send("evm_mine", []);
+
+          const txn = await raffle.performUpkeep([]);
+          expect(txn);
+        });
+
+        it("reverts when checkUpkeep returns false", async () => {
+          await expect(raffle.performUpkeep([])).to.be.revertedWithCustomError(
+            raffle,
+            "Raffle__UpkeepNotNeeded"
+          );
+        });
+
+        it("updates the raffle state, emits event and calls the vrf coordinator", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+          await network.provider.send("evm_mine", []);
+
+          const txnResponse = await raffle.performUpkeep([]);
+          const txnReceipt = await txnResponse.wait(1);
+          const requestId = txnReceipt.events![1].args!.requestId;
+          const raffleState = await raffle.getRaffleState();
+
+          expect(requestId).to.be.greaterThan(0);
+          expect(raffleState).to.equal(1);
         });
       });
     });
