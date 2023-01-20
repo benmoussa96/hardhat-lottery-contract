@@ -1,13 +1,9 @@
 # Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Steps to run the staging tests:
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+1. Create a subscription with Chainlink VRF and fund it
+2. Deploy the contract with the subscriptionId
+3. Register the contract as a consumer with Chainlink VRF (contractAddress, subscriptionId)
+4. Register the contract with Chainlink Keepers
+5. Run stagin tests

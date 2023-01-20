@@ -1,6 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { assert } from "console";
 import { BigNumber } from "ethers";
 import { deployments, ethers, network } from "hardhat";
 import { developmentChains, networkConfig } from "../../helper-hardhat-config";
@@ -148,7 +147,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
           ).to.be.revertedWith("nonexistent request");
         });
 
-        it("picks a winner, resets, and sends money", async () => {
+        it("picks a winner with multiple entranc then resets and sends money", async () => {
           const originalEntrance = 1;
           const additionalEntrances = 3;
           const totalEntrances = originalEntrance + additionalEntrances;
@@ -172,6 +171,7 @@ import { Raffle, VRFCoordinatorV2Mock } from "../../typechain-types";
                 const numPlayers = await raffle.getNumberOfPlayers();
                 const winnerEndingBalance = await accounts[1].getBalance();
 
+                // Test statements
                 expect(recentWinner).to.equal(accounts[1].address);
                 expect(numPlayers).to.equal(0);
                 expect(raffleState).to.equal(0);

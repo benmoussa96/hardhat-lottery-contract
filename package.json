@@ -31,5 +31,15 @@
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
     "typescript": "^4.9.4"
+  },
+  "scripts": {
+    "compile": "yarn hardhat compile",
+    "deploy": "yarn hardhat deploy",
+    "deploy:goerli": "yarn hardhat deploy --network goerli",
+    "test": "yarn hardhat test",
+    "test:staging": "yarn hardhat test --network goerli",
+    "lint": "yarn solhint 'contracts/*.sol'",
+    "format": "yarn prettier --write",
+    "coverage": "yarn hardhat coverage"
   }
 }
