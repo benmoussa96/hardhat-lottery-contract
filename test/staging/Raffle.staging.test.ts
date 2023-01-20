@@ -1,20 +1,17 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { deployments, ethers, network } from "hardhat";
+import { ethers, network } from "hardhat";
 import { developmentChains } from "../../helper-hardhat-config";
 import { Raffle } from "../../typechain-types";
 
 developmentChains.includes(network.name)
   ? describe.skip
   : describe("Raffle staging tests", () => {
-      let raffle: Raffle,
-        accounts: SignerWithAddress[],
-        deployer: SignerWithAddress,
-        raffleEntranceFee: BigNumber;
+      let raffle: Raffle, deployer: SignerWithAddress, raffleEntranceFee: BigNumber;
 
       beforeEach(async () => {
-        accounts = await ethers.getSigners();
+        const accounts = await ethers.getSigners();
         deployer = accounts[0];
         raffle = await ethers.getContract("Raffle", deployer);
         raffleEntranceFee = await raffle.getEntranceFee();

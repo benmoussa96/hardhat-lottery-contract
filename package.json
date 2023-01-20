@@ -19,7 +19,6 @@
     "@types/node": "^18.11.18",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
-    "ethereum-waffle": "^3.4.4",
     "ethers": "^5.7.2",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-deploy": "^0.11.22",
@@ -38,6 +37,7 @@
     "deploy:goerli": "yarn hardhat deploy --network goerli",
     "test": "yarn hardhat test",
     "test:staging": "yarn hardhat test --network goerli",
+    "getWinners:goerli": "yarn hardhat run scripts/getWinners.ts --network goerli",
     "lint": "yarn solhint 'contracts/*.sol'",
     "format": "yarn prettier --write",
     "coverage": "yarn hardhat coverage"

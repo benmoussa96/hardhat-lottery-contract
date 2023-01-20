@@ -65,7 +65,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     event raffleEntered(address indexed player);
     event randomWinnerRequested(uint256 indexed requestId);
-    event randomWinnerPicked(address indexed recentWinner);
+    event randomWinnerPicked(address indexed recentWinner, uint256 amountWon);
 
     constructor(
         address _VRFCoordinatorV2,
@@ -154,18 +154,19 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     ) internal override {
         uint256 indexOfWinner = _randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
+        uint256 amountWon = address(this).balance;
 
         s_recentWinner = recentWinner;
         s_raffleState = RaffleState.OPEN;
         s_players = new address payable[](0);
 
-        (bool success, ) = recentWinner.call{value: address(this).balance}("");
+        (bool success, ) = recentWinner.call{value: amountWon}("");
 
         if (!success) {
             revert Raffle__TransferFailed();
         }
 
-        emit randomWinnerPicked(recentWinner);
+        emit randomWinnerPicked(recentWinner, amountWon);
     }
 
     /** Getter Functions */
