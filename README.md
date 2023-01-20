@@ -1,6 +1,6 @@
 # Sample Hardhat Project
 
-Contract deployed at: [0xc88557F3c18F4aC4F4Cf237d9750d0e4cBD3Ec6d](https://goerli.etherscan.io/address/0xc88557F3c18F4aC4F4Cf237d9750d0e4cBD3Ec6d)
+`Raffle` contract deployed at: [0xc88557F3c18F4aC4F4Cf237d9750d0e4cBD3Ec6d](https://goerli.etherscan.io/address/0xc88557F3c18F4aC4F4Cf237d9750d0e4cBD3Ec6d)
 
 Steps to run the staging tests:
 
