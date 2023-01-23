@@ -19,8 +19,8 @@ const updateFrontEnd: DeployFunction = async function ({
 
   if (process.env.UPDATE_FRONT_END) {
     console.log("Updating frontend...");
-    updateContractAddresses(chainId.toString());
-    updateAbi();
+    await updateContractAddresses(chainId.toString());
+    await updateAbi();
   }
 };
 
