@@ -11,7 +11,7 @@ const deployRaffle: DeployFunction = async function ({
   deployments,
   network,
 }: HardhatRuntimeEnvironment) {
-  const { deploy, log } = deployments;
+  const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId: number = network.config.chainId!;
 
@@ -53,7 +53,7 @@ const deployRaffle: DeployFunction = async function ({
 
   if (developmentChains.includes(network.name)) {
     await vrfCoordinatorV2Mock?.addConsumer(subscriptionId, raffle.address);
-    
+
     if (process.env.ETHERSCAN_API_KEY) {
       await verify(raffle.address, raffleArgs);
     }

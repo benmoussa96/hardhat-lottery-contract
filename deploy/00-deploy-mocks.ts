@@ -11,7 +11,7 @@ const deployMocks: DeployFunction = async function ({
   deployments,
   network,
 }: HardhatRuntimeEnvironment) {
-  const { deploy, log } = deployments;
+  const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId: number = network.config.chainId!;
 

@@ -11,8 +11,6 @@ const FRONTEND_ADDRESSES_LOCATION =
 const FRONTEND_ABI_FILE = "../nextjs-lottery-frontend/constants/abi.json";
 
 const updateFrontEnd: DeployFunction = async function ({
-  getNamedAccounts,
-  deployments,
   network,
 }: HardhatRuntimeEnvironment) {
   const chainId: number = network.config.chainId!;
