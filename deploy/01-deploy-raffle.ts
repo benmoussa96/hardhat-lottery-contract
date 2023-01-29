@@ -53,10 +53,8 @@ const deployRaffle: DeployFunction = async function ({
 
   if (developmentChains.includes(network.name)) {
     await vrfCoordinatorV2Mock?.addConsumer(subscriptionId, raffle.address);
-
-    if (process.env.ETHERSCAN_API_KEY) {
-      await verify(raffle.address, raffleArgs);
-    }
+  } else if (process.env.ETHERSCAN_API_KEY) {
+    await verify(raffle.address, raffleArgs);
   }
 };
 
